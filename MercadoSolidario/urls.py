@@ -31,6 +31,6 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('',TemplateView.as_view(template_name='index.html'), name='index'),
     path('',include('pwa.urls'), name='pwa'),
-	 path('analise/', include('mercadoAnalytics.urls'))
+	 #path('analise/', include('mercadoAnalytics.urls'))
 ]
 
