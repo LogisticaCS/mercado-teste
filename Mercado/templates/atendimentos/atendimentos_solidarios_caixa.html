@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <h2 class="text-center">Atendimento Mercado  - Mercado Solidário CS - CAIXA</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="text-center mt-3">
+        {% if context.rascunho_id %}
+           <div>
+             <p>ATENÇÃO: Você tem um atendimento de {{ context.solidarios }} solidários em andamento. Continua ou encerra sem salvar?</p>
+             <a class="btn btn-primary mb-5" href="rascunhoCaixa">Continuar</a>
+             <a class="btn btn-danger mt-5" href="cancelar">Cancelar atendimento (todos os dados do atendimento serão apagados)</a>
+            </div>
+        {% else %}
+          <div>
+            <div>Selecione um nome da lista:</div>
+            <select id="selectid" name="selectid" class="form-control form-control-lg" oninput="copyValue()"> 
+              <option> ------ Selecione ------- </option>
+              {% for pessoa in assistidos %}
+                <option value="{{ pessoa.num_solidarios }}" data-id="{{pessoa.id}}">{{pessoa.nome}}</option> 
+              {% endfor %}
+            </select>
+          </div>
+          <div class="text-center">Pressione "Continuar" para iniciar o atendimento</div>
+          <div>
+
+            <form name="formSolidarios" id="formSol" method="POST" action="rascunhoCaixa">
+              <div class="form-group">
+                <label for="solidario">Quantidade de Solidários</label>
+                <input type="hidden" name="assistido" id="assistido" ></input>
+                <input type="number" name="solidario" id="solidario" class="form-control-lg text-center" required ></input>
+                {% csrf_token %}
+              </div>
+              <button type="submit" class="btn btn-primary text-center">Continuar</button>
+            </form>
+          </div>
+          <script>
+            function copyValue(){
+              var selecao = document.getElementById("selectid");
+              var valor = selecao.options[selecao.selectedIndex].value;
+              $('#solidario').val(valor);
+              var id = selecao.options[selecao.selectedIndex].getAttribute("data-id");
+              $('#assistido').val(id);
+            }
+          </script>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock conteudo %}

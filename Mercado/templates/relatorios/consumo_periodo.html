@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+
+<div class="container">
+  <div class="row">
+    <div class="col text-center">
+      <h2>Relatório de Consumo por Período - Mercado Solidário CS</h2>
+    </div>
+  </div>
+</div>
+<div class="container mt-2 mb-4 border">
+    <form method="POST" class="row align-items-end justify-content-center py-2">
+      {% csrf_token %}
+      <h3>Escolha as Datas de início e final. (padrão, mês corrente)</h3>
+      <div id="inicio-picker" class="col">
+        <div>Data Inicial</div>
+        <input id="inicial" name="inicial" type="text" value='{{ context.inicial|date:"d/m/Y" }}'>
+      </div>
+      <div id="final-picker" class="col">
+        <div>Data Final</div>
+        <input id="final" name="final" type="text" value='{{ context.final|date:"d/m/Y"  }}'>
+      </div>
+      <div class="col mt-2">
+        <button class="btn btn-outline-info" type="submit">Gerar Relatório</button>
+      </div>
+    </form>
+</div>
+<div class="container mt-4 mb-2 border">
+  <div class="row mt-4 mb-4">
+    <div class="col">
+      <h4>Período: {{ context.inicial|date:"d/m/Y" }} - {{ context.final|date:"d/m/Y" }}</h4>
+      </div>   
+      <div class="col text-end">
+        <h4>Total de Kg (estimado): {{ context.tot_kg }}</h4>
+      </div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <table id="tbProdutos" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">		
+        <thead> 
+                <tr>
+                    <th>Produto</th>
+                    <th scope="col" style="text-align:center;">Quantidade</th>  
+                    <th scope="col" style="text-align:center;">Peso em Kg (estimado)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for produto in context.itens_atendimentos %}
+                <tr>
+                    <td>{{ produto.produto}}</td>
+                    <td style="text-align:center;">{{ produto.tot_itens }}</td>
+                    <td style="text-align:center;">{{ produto.kg }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+         <script lang="javascript">
+            $(document).ready( function () {
+                var table = $('#tbProdutos').DataTable( {
+                    language: {
+                    url: 'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Portuguese-Brasil.json'
+                    },
+                    responsive : true
+                } )
+                .columns.adjust()
+                .responsive.recalc();
+
+            } );
+            // https://bootstrap-datepicker.readthedocs.io/en/latest/
+            inicio_div = $('#inicio-picker input').datepicker({
+              autoclose: true,
+              format: 'dd/mm/yyyy',
+            }).on('changeDate', function(e) {
+               // `e` here contains the extra attributes
+               $('#final-picker input').datepicker('clearDates');
+               
+            });
+            final_div = $('#final-picker input').datepicker({
+              autoclose: true,
+              format: 'dd/mm/yyyy'
+            })    
+        </script>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock conteudo %}

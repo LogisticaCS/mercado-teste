@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <h2 class="text-center">Atendimento Mercado  - Mercado Solidário CS</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="text-center mt-3">
+        {% if context.rascunho_id %}
+           <div>
+             <p>ATENÇÃO: Você tem um atendimento de {{ context.solidarios }} solidários em andamento. Continua ou encerra sem salvar?</p>
+             <a class="btn btn-primary mb-5" href="rascunho">Continuar</a>
+             <a class="btn btn-danger mt-5" href="cancelar">Cancelar atendimento (todos os dados do atendimento serão apagados)</a>
+            </div>
+        {% else %}
+          <div>
+            <div class="text-center mt-3">
+               Selecione um nome da lista e Pressione "Continuar" para iniciar o atendimento
+            </div>
+            <div clsass="text-center mt-3">
+              <form name="formSolidarios" id="formSol" method="POST" action="rascunho">
+                 <div class="form-group mt-3">
+                  <label for="solidario">Quantidade de Solidários</label>
+                  <input type="hidden" name="assistido" id="assistido" ></input>
+                  <input type="number" name="solidario" id="solidario" class="form-control-lg text-center" required ></input>
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-primary text-center">Continuar</button>
+                </div>
+              </form>
+            </div>
+            <!--select id="selectid" name="selectid" class="form-control form-control-lg" oninput="copyValue()"> 
+              <option> ------ Selecione ------- </option>
+              {% for pessoa in assistidos %}
+                <option value="{{ pessoa.num_solidarios }}" data-id="{{pessoa.id}}">{{pessoa.nome}}</option> 
+              {% endfor %}
+            </select -->
+          </div>
+          <table id="tbAssistidos">
+            <thead>
+              <th></th>
+            </thead>
+            <tbody>
+               <form name="formTmp">
+                 {% for pessoa in assistidos %}
+                  <tr class="p-0">
+                     <td class="text-start"><label>
+                        <input type="radio" name="rdAssistidos" id="{{ pessoa.id }}" data-solidarios="{{ pessoa.num_solidarios }}" value="{{ pessoa.nome }}">
+                        {{ pessoa.nome }}
+                     </label></td>
+                  </tr> 
+                 {% endfor %}
+              </form>
+            </tbody>
+          </table>
+        </div>
+          <script>
+            function copyValue(){
+              var selecao = document.getElementById("selectid");
+              var valor = selecao.options[selecao.selectedIndex].value;
+              $('#solidario').val(valor);
+              var id = selecao.options[selecao.selectedIndex].getAttribute("data-id");
+              $('#assistido').val(id);
+            }
+          </script>
+         <script>
+            // Seleciona todos os inputs do tipo radio dentro do formulário
+            const radios = document.querySelectorAll('input[name="rdAssistidos"]');
+
+            // Adiciona um listener de evento para cada botão de rádio
+            radios.forEach((radio) => {
+               radio.addEventListener('change', function() {
+                  if (this.checked) {
+                     $('#solidario').val(this.getAttribute("data-solidarios"));
+                     $('#assistido').val(this.id);
+                  };
+               });
+            });
+
+         </script>
+         <script lang="javascript">
+            function aplicarZebra() {
+               const linhas = document.querySelectorAll('#tbAssistidos tbody tr');
+               linhas.forEach((linha, index) => {
+                  if (index % 2 === 0) {
+                  linha.style.backgroundColor = '#ffffff'; // par
+                  } else {
+                  linha.style.backgroundColor = '#f2f2f2'; // ímpar
+                  }
+               });
+            };
+
+            $(document).ready( function () {
+                  var tableto = $('#tbAssistidos').DataTable( {
+                     language: {
+                     url: 'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Portuguese-Brasil.json'
+                     },
+                     responsive : true,
+                     "searching" : true,
+                     "paging" : false,
+                     //"scrollY" : "250px",
+                     "ordering" : false,
+                     "info" : false
+                  } )
+                  .responsive.recalc();
+                  setTimeout(function(){
+                  var a=0; 
+                  while ( a == 0 ) {
+                        if ($('#tbAssistidos_filter').length){a=1;}       
+                  };
+                  $('#tbAssistidos_filter').css('float','left');
+                  $('#tbAssistidos_filter').addClass('mt-1 ps-3');
+                  
+                  },2000);
+                  tableto.on('draw.dt', function() {
+                     aplicarZebra();
+                  });
+
+                  } );
+                  
+            </script>
+           
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock conteudo %}

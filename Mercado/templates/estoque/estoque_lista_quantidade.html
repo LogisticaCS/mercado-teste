@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+
+<div class="container">
+  <div class="row">
+
+    <div class="col text-center">
+      <h2>Listagem de Estoque Por Produto Solidário - Mercado Solidário CS</h2>
+    </div>
+
+	</div>
+	<div class="row">
+    <div class="col">
+      <div class="container">
+        <table id='tbProdutos' class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">		
+          <thead> 
+            <tr>
+                <th>Produto</th>
+                <th scope="col" width="10%">Quantidade em Estoque e Prateleira</th>
+                <th scope="col">Estoque Mínimo</th>
+            </tr>
+          </thead>
+          <tbody>
+              {% for produto in estoque %}
+              <div class="row">
+                {% if produto.quantidade < produto.estoque_minimo %}
+                  <tr style="background-color: red;color:white;font-weight: bold;">
+                {% else %}
+                  <tr >
+                {% endif %}
+                    <div class="col"><td>{{ produto.produto}}</td></div>
+                    <div class="col"></div><td>{{ produto.quantidade }}</td></div>
+                    <div class="col"></div><td>{{ produto.estoque_minimo }}</td></div>
+                </tr>
+              </div>
+              {% endfor %}
+              
+          </tbody>
+          <tfoot>
+            <p><span style="background-color: red;color:white;font-weight: bold;">* &nbsp; </span>Estoque abaixo do mínimo cadastrado</p>
+          </tfoot>
+        </table>
+      </div>
+      <script lang="javascript">
+        $(document).ready( function () {
+            var table = $('#tbProdutos').DataTable( {
+                language: {
+                url: 'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Portuguese-Brasil.json'
+                },
+                responsive : true
+            } )
+            .columns.adjust()
+            .responsive.recalc();
+        } );
+      </script>
+    </div>
+  </div>
+</div>
+
+{% endblock conteudo %}
