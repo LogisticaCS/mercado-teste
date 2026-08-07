@@ -1,0 +1,95 @@
+sudo apt install git
+sudo apt install python3-pip
+sudo apt install python3-venv
+sudo apt install virtualenv
+sudo apt install mariadb-client
+sudo apt install libmysqlclient-dev
+sudo apt install python3-mysql
+sudo apt install python3-mysqldb
+sudo apt install python3-mysql.connector 
+sudo apt install python3-mysqldb-dbg
+
+----
+To make mysql work with django/python3
+
+https://stackoverflow.com/questions/454854/no-module-named-mysqldb
+
+pip3 install wheel pymysql mysqlclient django django-mathfilters  django-rest-framework 
+
+sudo apt-get install pkg-config libcairo2-dev libjpeg-dev libgif-dev
+
+
+-- in settings.py
+
+import pymysql
+pymysql.install_as_MySQLdb()
+
+pip3 install -U selenium
+
+Selenium drive configurate
+https://selenium-python.readthedocs.io/installation.html#drivers
+
+----
+
+python3 manage.py migrate
+python3 manage.py createsuperuser
+
+Run all tests
+python manage.py test --pattern="tests_*.py"
+
+Run a test
+Sample: python manage.py test <Módulo>.<pasta>.tests_models
+
+python manage.py test Mercado.tests.tests_models
+
+----
+add in para ler codigos de barra e qrcode
+
+https://github.com/mebjas/html5-qrcode
+
+https://blog.minhazav.dev/research/html5-qrcode.html
+
+---- Para rodar o local server com https
+https://timonweb.com/django/https-django-development-server-ssl-certificate/
+
+
+---- deploy
+./MercadoSolidario/settings.py
+./Mercado/urls.py.
+/.env
+/requirements.txt
+
+https://www.youtube.com/playlist?list=PL-osiE80TeTsqhIuOqKhwlXsIBIdSeYtc # playlist top
+
+----- Dialogo modal
+https://www.youtube.com/watch?v=3dyQigrEj8A
+
+
+----- manutenção
+UPDATE Mercado_produtosolidario SET codigo_solidario= CONCAT("2022101022",SUBSTR(CONCAT("0000",id),-3)) ;
+delimiter $$ 
+create trigger `produto_QRCode` before insert on Mercado_produtosolidario for each row begin set new.codigo_solidario = concat('2022101022',SUBSTR(concat('000',LAST_INSERT_ID()+1),-3));end$$
+delimiter ;
+
+to do:
+-- debitar compra do estoque - feito
+-- cadastro do codigo codigo_solidario
+-- relatório de entrega - feito
+-- relatorio de estoque x entrega
+-- Cestas básica, emergencial, x e extra.
+-- na interface de código do produto colocar botão para quantidade
+-- debitar itens no fechamento - feito
+-- colocar lista de produtos na interface de rascunho -feito
+
+---https://www.jenkins.io/doc/book/installing/
+--- Script para deploy automatizado
+#https://www.blazemeter.com/blog/how-to-integrate-your-github-repository-to-your-jenkins-project
+
+-- /home/mercadocs/projeto/deploy.bash
+#!/bin/bash
+cd $GIT_CHECKOUT_DIR
+for a in `find . -mtime 0 -type f -ls  | grep -v .git | grep -v txt | grep -v sql | grep -v Install | grep -v xlsx | grep -v cache | grep -v settings.py | gawk '{print $NF}'`; do echo `dirname $a`;done
+source mercado/bin/activate
+python3 manage.py migrate
+python3 manage.py migrate
+sudo systemctl restart apache2.service
