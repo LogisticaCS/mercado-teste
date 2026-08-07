@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'mathfilters',
     'rest_framework',
     'api',
-	 'mercadoAnalytics',
+	 #'mercadoAnalytics',
     'pwa',
     'django_extensions'
 ]
